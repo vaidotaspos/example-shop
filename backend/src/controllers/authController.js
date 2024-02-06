@@ -34,7 +34,8 @@ const login = async (req, res, next) => {
 const register = async (req, res, next) => {
     const {firstname, lastname, email, password} = req.body;
 
-    const passwordHash = bcrypt.hashSync(password, 10);
+    const salt = process.env.SALT || 5;
+    const passwordHash = bcrypt.hashSync(password, +salt);
 
     const sql = 'INSERT INTO `customers` (`firstname`, `lastname`, `email`, `password`) VALUES (?, ?, ? ,?)';
     const [resObj, error] = await makeSqlQuery(sql, [firstname, lastname, email, passwordHash]);

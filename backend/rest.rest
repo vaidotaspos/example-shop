@@ -1,0 +1,47 @@
+### main  page
+GET http://localhost:3000/
+
+### login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "james@bond.com",
+  "password": "123456"
+}
+
+### register
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "mike@bond.com",
+  "password": "123456"
+}
+
+### Get all items
+GET http://localhost:3000/api/items
+
+### Get single item
+GET http://localhost:3000/api/items/2
+
+### Get single item
+POST http://localhost:3000/api/items/
+Content-Type: application/json
+
+{
+  "title": "Train to Madagascar",
+  "description": "Penguins and safari stuff",
+  "price": 2999.99,
+  "rating": 4.05,
+  "stock": 3,
+  "cat_id": 3,
+  "img_url": "https://picsum.photos/id/12/800/600"
+}
+
+### Get single item
+DELETE http://localhost:3000/api/items/3
+
+
+### Get all categories
+GET http://localhost:3000/api/categories

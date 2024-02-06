@@ -24,7 +24,7 @@ const login = async (req, res, next) => {
         return next(new APIError('pass or email not match (pass no match)', 401));
     }
 
-    const token = makeJWTToken({email: foundUserInDB.email, userId: foundUserInDB.id});
+    const token = makeJWTToken({email: foundUserInDB.email, userId: foundUserInDB.id, scope: foundUserInDB.scope});
     res.json({
         message: 'Welcome ' + foundUserInDB.firstname + ' ' + foundUserInDB.lastname + '!',
         token,

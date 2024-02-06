@@ -8,6 +8,7 @@ const AuthContext = createContext({
     login(email, token) {},
     logout() {},
     isUserLoggedIn: false,
+    isUserAdmin: false,
 });
 
 function parseJWTTokenData(token) {
@@ -59,8 +60,15 @@ export default function AuthCtxProvider({children}) {
 
     const isUserLoggedIn = !!authState.token;
 
+    let isUserAdmin = false;
+    if (isUserLoggedIn) {
+        const tokenData = jwtDecode(authState.token);
+        isUserAdmin = !!(tokenData.hasOwnProperty('scope') && tokenData.scope === 'admin');
+    }
+
     const ctxValue = {
         isUserLoggedIn,
+        isUserAdmin,
         token: authState.token,
         email: authState.email,
         userId: authState.userId,

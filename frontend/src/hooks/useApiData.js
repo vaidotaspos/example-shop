@@ -9,12 +9,10 @@ export default function useApiData(apiUrl, initValue = []) {
     axios
       .get(apiUrl)
       .then((response) => {
-        console.log('response ===', response);
         const commFromAPI = response.data;
         setDataArr(commFromAPI);
       })
       .catch((error) => {
-        console.log('useApiData errro ===', error);
         setApiErr(error);
       });
   }, [apiUrl]);

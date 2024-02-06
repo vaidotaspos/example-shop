@@ -29,7 +29,6 @@ export default function LoginPage() {
         axios
             .post(`${baseBeUrl}/auth/login`, data)
             .then((response) => {
-                console.log('RESPONSE ==== ', response);
                 login(data.email, response.data.token);
                 navigate('/shop', {replace: true});
                 toast.success(response.data?.message || 'Welcome');

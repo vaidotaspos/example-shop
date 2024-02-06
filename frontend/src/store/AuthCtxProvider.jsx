@@ -1,51 +1,76 @@
-import { createContext, useContext, useState } from 'react';
+import {createContext, useContext, useState} from 'react';
+import {jwtDecode} from "jwt-decode";
 
 const AuthContext = createContext({
-  token: '',
-  email: '',
-  login(email, token) {},
-  logout() {},
-  isUserLoggedIn: false,
-});
-
-AuthContext.displayName = 'MusuAutentifikacija';
-
-export default function AuthCtxProvider({ children }) {
-  const [authState, setAuthState] = useState({
     token: '',
     email: '',
-  });
+    userId: '',
+    login(email, token) {},
+    logout() {},
+    isUserLoggedIn: false,
+});
 
-  function login(email, token) {
-    // console.log('ivyko login', email, token);
-    setAuthState({
-      token,
-      email,
-    });
+function parseJWTTokenData(token) {
+  if (!token) return {};
+
+  const tokenData = jwtDecode(token);
+
+  const dataNow = Date.now() / 1000;
+  const expire = tokenData.exp + tokenData.iat;
+
+  if (dataNow > expire) {
+    localStorage.removeItem('token');
+    return {};
   }
 
-  function logout() {
-    setAuthState({
-      token: '',
-      email: '',
+  return {...tokenData, token:token}
+}
+
+export default function AuthCtxProvider({children}) {
+    let tokenData = parseJWTTokenData(localStorage.getItem('token'));
+
+    const [authState, setAuthState] = useState({
+        token: tokenData?.token || '',
+        email: tokenData?.email || '',
+        userId: tokenData?.sub || '',
     });
-  }
 
-  const isUserLoggedIn = !!authState.token;
+    function login(email, token) {
+        const tokenData = jwtDecode(token)
 
-  console.log('isUserLoggedIn ===', isUserLoggedIn);
+        setAuthState({
+            token: token,
+            email: email,
+            userId: tokenData.sub
+        });
 
-  const ctxValue = {
-    isUserLoggedIn,
-    token: authState.token,
-    email: authState.email,
-    login,
-    logout,
-  };
+        localStorage.setItem('token', token)
+    }
 
-  return <AuthContext.Provider value={ctxValue}>{children}</AuthContext.Provider>;
+    function logout() {
+        localStorage.removeItem('token');
+
+        setAuthState({
+            token: '',
+            email: '',
+            userId: '',
+        });
+    }
+
+    const isUserLoggedIn = !!authState.token;
+
+    const ctxValue = {
+        isUserLoggedIn,
+        token: authState.token,
+        email: authState.email,
+        userId: authState.userId,
+        login,
+        logout,
+    };
+
+    return <AuthContext.Provider value={ctxValue}>{children}</AuthContext.Provider>;
 }
 
 export function useAuthContext() {
-  return useContext(AuthContext);
+    return useContext(AuthContext);
 }

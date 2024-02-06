@@ -1,5 +1,4 @@
 function SmartInput({ id, formik, type = 'text', readOnly = false, placeholder = '' }) {
-  // id = title
 
   const areaInput = (
     <textarea

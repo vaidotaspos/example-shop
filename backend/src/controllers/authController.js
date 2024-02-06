@@ -1,81 +1,59 @@
-const chalk = require('chalk');
 const bcrypt = require('bcryptjs');
-const { makeSqlQuery, makeJWTToken } = require('../helpers');
+const {makeSqlQuery, makeJWTToken} = require('../helpers');
 const APIError = require('../apiError/ApiError');
 
 const login = async (req, res, next) => {
-  // pasiimti email ir plain password
-  const { email, password } = req.body;
+    const {email, password} = req.body;
 
-  // ieskoti db customer pagal email
-  const sql = 'SELECT * FROM customers WHERE email=?';
-  const [rowsArr, error] = await makeSqlQuery(sql, [email]);
+    const sql = 'SELECT * FROM customers WHERE email=?';
+    const [rowsArr, error] = await makeSqlQuery(sql, [email]);
 
-  if (error) {
-    console.log('login error ===');
-    return next(error);
-  }
+    if (error) {
+        return next(error);
+    }
 
-  // ar radom useri
-  if (rowsArr.length === 0) {
-    console.log('user not found ===');
-    return next(new APIError('Email not found', 400));
-  }
+    if (rowsArr.length === 0) {
+        return next(new APIError('Email not found', 400));
+    }
 
-  // radom useri
-  const foundUserInDB = rowsArr[0];
+    const foundUserInDB = rowsArr[0];
 
-  const passHash = foundUserInDB.password;
+    const passHash = foundUserInDB.password;
 
-  // patikrinti ar sutampa slaptazodiziai
-  if (!bcrypt.compareSync(password, passHash)) {
-    return next(new APIError('pass or email not match (pass no match)', 401));
-  }
-  // sekme
+    if (!bcrypt.compareSync(password, passHash)) {
+        return next(new APIError('pass or email not match (pass no match)', 401));
+    }
 
-  // sugeneruojam token jwt
-
-  const token = makeJWTToken({ email: foundUserInDB.email, sub: foundUserInDB.id });
-  res.json({
-    msg: 'login success',
-    token,
-  });
-};
-const register = async (req, res, next) => {
-  // pasiimti duomenis kuriuos gavom
-  const { email, password } = req.body;
-
-  // console.log(chalk.magenta('req.body ===', req.body));
-  console.log('req.body ===', req.body);
-
-  // bcryp passqord
-  const passwordHash = bcrypt.hashSync(password, 10);
-
-  // irasyti i db
-
-  const sql = 'INSERT INTO `customers` (`email`, `password`) VALUES (?, ?)';
-  const [resObj, error] = await makeSqlQuery(sql, [email, passwordHash]);
-
-  if (error) {
-    console.log('register error ===');
-    next(error);
-    // new APIError('too h', status, type)
-    return;
-  }
-
-  // sekmingas yrasymas
-  if (resObj.affectedRows === 1) {
-    res.status(201).json({
-      msg: 'user created',
-      id: resObj.insertId,
+    const token = makeJWTToken({email: foundUserInDB.email, userId: foundUserInDB.id});
+    res.json({
+        message: 'Welcome ' + foundUserInDB.firstname + ' ' + foundUserInDB.lastname + '!',
+        token,
     });
-  }
+};
 
-  // kai uzklausa pavyko bet affectedRows !== 1
-  res.end();
+const register = async (req, res, next) => {
+    const {firstname, lastname, email, password} = req.body;
+
+    const passwordHash = bcrypt.hashSync(password, 10);
+
+    const sql = 'INSERT INTO `customers` (`firstname`, `lastname`, `email`, `password`) VALUES (?, ?, ? ,?)';
+    const [resObj, error] = await makeSqlQuery(sql, [firstname, lastname, email, passwordHash]);
+
+    if (error) {
+        return next(error);
+    }
+
+    if (resObj.affectedRows === 1) {
+        res.status(201).json({
+            message: 'User created successfully',
+            id: resObj.insertId,
+        });
+    }
+
+    res.end();
 };
 
 module.exports = {
-  login,
-  register,
+    login,
+    register,
 };

@@ -4,7 +4,7 @@ const { makeSqlQuery } = require('../helpers');
 module.exports = {
   getAll: async (req, res, next) => {
     // sukuriam sql
-    const sql = 'SELECT * FROM `items` WHERE isDeleted=0';
+    const sql = 'SELECT * FROM `items`';
 
     // makeSqlQuery
     const [itemsArr, error] = await makeSqlQuery(sql);

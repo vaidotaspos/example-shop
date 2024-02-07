@@ -38,9 +38,15 @@ export default function Header() {
           {isUserLoggedIn && (
               <>
                 {isUserAdmin && (
-                    <NavLink className={'px-4 py-2 hover:bg-slate-500 hover:text-white '} to={'/categories'}>
-                      Categories
-                    </NavLink>
+                    <>
+                      <NavLink className={'px-4 py-2 hover:bg-slate-500 hover:text-white '} to={'/items'}>
+                        Items
+                      </NavLink>
+                      <NavLink className={'px-4 py-2 hover:bg-slate-500 hover:text-white '} to={'/categories'}>
+                        Categories
+                      </NavLink>
+                    </>
+
                 )}
                 <button
                     onClick={handleLogout}

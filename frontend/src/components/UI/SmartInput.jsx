@@ -1,4 +1,4 @@
-function SmartInput({ id, formik, type = 'text', readOnly = false, placeholder = '' }) {
+function SmartInput({ id, formik, type = 'text', readOnly = false, placeholder = '', title }) {
 
   const areaInput = (
     <textarea
@@ -12,9 +12,9 @@ function SmartInput({ id, formik, type = 'text', readOnly = false, placeholder =
   );
 
   return (
-    <>
-      <label className='w-full '>
-        <span className='block'>{id.charAt(0).toUpperCase() + id.slice(1)}</span>
+    <div className='mt-5'>
+      <label className='w-full mt-5'>
+        <span className='block'>{title ?? id.charAt(0).toUpperCase() + id.slice(1)}</span>
 
         {type === 'textarea' ? (
           areaInput
@@ -34,7 +34,7 @@ function SmartInput({ id, formik, type = 'text', readOnly = false, placeholder =
       {formik.touched[id] && formik.errors[id] && (
         <p className='text-red-500 '>{formik.errors[id]}</p>
       )}
-    </>
+    </div>
   );
 }
 

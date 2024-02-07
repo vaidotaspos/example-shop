@@ -8,6 +8,7 @@ import {Toaster} from 'react-hot-toast';
 import AdminPrivateRoute from "./PrivateRoute/AdminPrivateRoute.jsx";
 import CategoryListPage from "./pages/Category/CategoryListPage.jsx";
 import CategoryCreatePage from "./pages/Category/CategoryCreatePage.jsx";
+import CategoryEditPage from "./pages/Category/CategoryEditPage.jsx";
 
 export default function App() {
     return (
@@ -29,6 +30,12 @@ export default function App() {
                 <Route path='/categories/create' element={
                     <AdminPrivateRoute>
                         <CategoryCreatePage/>
+                    </AdminPrivateRoute>
+                }/>
+
+                <Route path='/categories/edit/:id' element={
+                    <AdminPrivateRoute>
+                        <CategoryEditPage/>
                     </AdminPrivateRoute>
                 }/>
             </Routes>

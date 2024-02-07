@@ -4,14 +4,19 @@ import * as Yup from 'yup';
 import axios from "axios";
 import {baseBeUrl} from "../../helper.js";
 import toast from "react-hot-toast";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
+import useApiData from "../../hooks/useApiData.js";
 
-export default function CategoryCreatePage() {
+export default function CategoryEditPage() {
+    const {id} = useParams();
     const navigate = useNavigate();
 
+    const [category, setCategory] = useApiData(`${baseBeUrl}categories/${id}`);
+
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
-            name: ''
+            name: category?.name || ''
         },
         validationSchema: Yup.object({
             name: Yup.string().min(3).max(128).required()
@@ -23,9 +28,9 @@ export default function CategoryCreatePage() {
 
     function sendAxiosData(data) {
         axios
-            .post(`${baseBeUrl}categories`, data)
+            .put(`${baseBeUrl}categories/${id}`, data)
             .then((response) => {
-                toast.success(response?.message || 'Category has been successfully created!');
+                toast.success(response?.message || 'Category has been successfully updated!');
                 navigate('/categories', {replace: true});
             })
             .catch((error) => {
@@ -35,7 +40,7 @@ export default function CategoryCreatePage() {
 
     return (
         <div className='container mx-auto'>
-            <h1 className='text-3xl text-center my-10'>Kategorijos sukūrimas</h1>
+            <h1 className='text-3xl text-center my-10'>Kategorijos redagavimas</h1>
             <form onSubmit={formik.handleSubmit} className='mt-4' noValidate>
                 <div className='mb-4'>
                     <SmartInput
@@ -49,7 +54,7 @@ export default function CategoryCreatePage() {
                     <button
                         className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                         type='submit'>
-                        Sukurti
+                        Atnaujinti
                     </button>
                     <Link
                         to='/categories'

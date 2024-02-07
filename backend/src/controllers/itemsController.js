@@ -5,7 +5,8 @@ module.exports = {
     getAll: async (req, res, next) => {
         const sql = 'SELECT `i`.*, `c`.name AS `category_name` ' +
             'FROM `items` as `i` ' +
-            'LEFT JOIN `categories` AS c ON `i`.`cat_id`  = `c`.`id`';
+            'LEFT JOIN `categories` AS c ON `i`.`cat_id`  = `c`.`id`' +
+            'WHERE `i`.`isDeleted` = 0';
 
         const [itemsArr, error] = await makeSqlQuery(sql);
 
@@ -57,12 +58,10 @@ module.exports = {
         const [resObj, error] = await makeSqlQuery(sql, argArr);
 
         if (error) {
-            console.log(' create item error ===', error);
             return next(error);
         }
 
         if (resObj.affectedRows !== 1) {
-            console.log('create item no rows affected', resObj);
             return next(new APIError('something went wrong', 400));
         }
 
@@ -73,19 +72,14 @@ module.exports = {
     },
     delete: async (req, res, next) => {
         const {itemId} = req.params;
-        // sukuriam sql
         const sql = 'UPDATE `items` SET isDeleted=1 WHERE id=? LIMIT 1';
 
         const [resObj, error] = await makeSqlQuery(sql, [itemId]);
-        console.log('resObj ===', resObj);
         if (error) {
-            console.log(' delete item error ===', error);
             return next(error);
         }
 
         if (resObj.affectedRows !== 1) {
-            // changedRows
-            console.log('delete item no rows affected', resObj);
             return next(new APIError('something went wrong', 400));
         }
 

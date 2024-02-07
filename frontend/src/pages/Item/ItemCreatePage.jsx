@@ -7,10 +7,11 @@ import {baseBeUrl} from "../../helper.js";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-
+import {useAuthContext} from "../../store/AuthCtxProvider.jsx";
 
 export default function ItemCreatePage() {
     const [categoriesOptions, setCategoriesOptions] = useState([""]);
+    const {token} = useAuthContext()
 
     const navigate = useNavigate();
 
@@ -18,20 +19,20 @@ export default function ItemCreatePage() {
         const getOptionData = async () => {
             const optionsArray = [];
             await axios
-                .get(`${baseBeUrl}categories`)
+                .get(`${baseBeUrl}categories`, {
+                    headers: {'Authorization': token}
+                })
                 .then((response) => {
                     let result = response.data;
                     result.map((category) => {
                         return optionsArray.push({value: category.id, label: category.name})
                     });
-                    setCategoriesOptions(result)
+                    setCategoriesOptions(optionsArray)
                 })
         };
 
         getOptionData();
     }, []);
-
-    console.log('CATEGORY === ', Array.from(categoriesOptions, (option) => option.value));
 
     const formik = useFormik({
         initialValues: {
@@ -46,7 +47,7 @@ export default function ItemCreatePage() {
         validationSchema: Yup.object({
             title: Yup.string().min(3).max(255).required(),
             description: Yup.string().optional(),
-            cat_id: Yup.number().required(),
+            cat_id: Yup.number().min(1).required(),
             price: Yup.string().required(),
             stock: Yup.number().required(),
             rating: Yup.number().optional(),
@@ -84,12 +85,10 @@ export default function ItemCreatePage() {
                         className='w-full rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
                         name='cat_id'
                         id='cat_id'
-                        options={categoriesOptions.map((category) => {
-                            return {value: category.id, label: category.name}
-                        })}
+                        options={categoriesOptions}
                         placeholder='Select Category'
                         onBlur={formik.handleBlur}
-                        onChange={(option) => formik.setFieldValue('cat_id', option.value)}
+                        onChange={(option) => formik.setFieldValue('cat_id', +option.value)}
                     />
                     {formik.touched['cat_id'] && formik.errors['cat_id'] && (
                         <p className='text-red-500 '>{formik.errors['cat_id']}</p>

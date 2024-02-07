@@ -3,13 +3,17 @@ import useApiData from "../../hooks/useApiData.js";
 import {baseBeUrl} from "../../helper.js";
 import axios from "axios";
 import toast from "react-hot-toast";
+import {useAuthContext} from "../../store/AuthCtxProvider.jsx";
 
 export default function CategoryListPage() {
     const [categories, setCategories] = useApiData(`${baseBeUrl}categories`);
+    const {token} = useAuthContext();
 
     function deleteCategory(categoryId) {
         axios
-            .delete(`${baseBeUrl}categories/${categoryId}`)
+            .delete(`${baseBeUrl}categories/${categoryId}`, {
+                headers: {'Authorization': token}
+            })
             .then((response) => {
                 toast.success(response?.message || `Category ID: ${categoryId} successfully deleted!`);
                 const list = categories.filter(category => category.id !== categoryId);

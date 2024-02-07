@@ -5,9 +5,12 @@ import axios from "axios";
 import {baseBeUrl} from "../../helper.js";
 import toast from "react-hot-toast";
 import {Link, useNavigate} from "react-router-dom";
+import {useAuthContext} from "../../store/AuthCtxProvider.jsx";
 
 export default function CategoryCreatePage() {
     const navigate = useNavigate();
+
+    const {token} = useAuthContext();
 
     const formik = useFormik({
         initialValues: {
@@ -23,7 +26,9 @@ export default function CategoryCreatePage() {
 
     function sendAxiosData(data) {
         axios
-            .post(`${baseBeUrl}categories`, data)
+            .post(`${baseBeUrl}categories`, data, {
+                headers: {'Authorization': token}
+            })
             .then((response) => {
                 toast.success(response?.message || 'Category has been successfully created!');
                 navigate('/categories', {replace: true});

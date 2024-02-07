@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const chalk = require('chalk');
 const cors = require('cors');
 const authRouter = require('./routes/authRoutes');
-const { mainErrroHandler } = require('./middleware');
+const { mainErrroHandler, validateJWTToken} = require('./middleware');
 const itemsRouter = require('./routes/itemRoutes');
 const categoriesRouter = require('./routes/categoryRoutes');
 
@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 // /api         /auth/login
 app.use('/api', authRouter);
 app.use('/api', itemsRouter);
-app.use('/api', categoriesRouter);
+app.use('/api', validateJWTToken, categoriesRouter);
 
 // 404 not found page api
 app.use((req, res) => {

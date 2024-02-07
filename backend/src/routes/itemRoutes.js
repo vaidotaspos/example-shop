@@ -2,6 +2,7 @@ const express = require('express');
 
 const itemsRouter = express.Router();
 const itemsController = require('../controllers/itemsController');
+const {validateJWTToken} = require("../middleware");
 
 // routes
 
@@ -12,9 +13,9 @@ itemsRouter.get('/items', itemsController.getAll);
 itemsRouter.get('/items/:itemId', itemsController.getSingle);
 
 // POST /api/items - create
-itemsRouter.post('/items', itemsController.create);
+itemsRouter.post('/items', validateJWTToken, itemsController.create);
 
 // DELETE /api/items - create
-itemsRouter.delete('/items/:itemId', itemsController.delete);
+itemsRouter.delete('/items/:itemId', validateJWTToken, itemsController.delete);
 
 module.exports = itemsRouter;

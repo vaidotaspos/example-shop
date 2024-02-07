@@ -6,10 +6,12 @@ import {baseBeUrl} from "../../helper.js";
 import toast from "react-hot-toast";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import useApiData from "../../hooks/useApiData.js";
+import {useAuthContext} from "../../store/AuthCtxProvider.jsx";
 
 export default function CategoryEditPage() {
     const {id} = useParams();
     const navigate = useNavigate();
+    const {token} = useAuthContext();
 
     const [category, setCategory] = useApiData(`${baseBeUrl}categories/${id}`);
 
@@ -28,7 +30,9 @@ export default function CategoryEditPage() {
 
     function sendAxiosData(data) {
         axios
-            .put(`${baseBeUrl}categories/${id}`, data)
+            .put(`${baseBeUrl}categories/${id}`, data, {
+                headers: {'Authorization': token}
+            })
             .then((response) => {
                 toast.success(response?.message || 'Category has been successfully updated!');
                 navigate('/categories', {replace: true});

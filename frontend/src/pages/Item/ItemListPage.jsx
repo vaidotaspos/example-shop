@@ -3,13 +3,17 @@ import useApiData from "../../hooks/useApiData.js";
 import {baseBeUrl} from "../../helper.js";
 import axios from "axios";
 import toast from "react-hot-toast";
+import {useAuthContext} from "../../store/AuthCtxProvider.jsx";
 
 export default function ItemListPage() {
     const [items, setItems] = useApiData(`${baseBeUrl}items`);
+    const {token} = useAuthContext();
 
     function deleteItem(itemId) {
         axios
-            .delete(`${baseBeUrl}items/${itemId}`)
+            .delete(`${baseBeUrl}items/${itemId}`, {
+                headers: {'Authorization': token}
+            })
             .then((response) => {
                 toast.success(response?.message || `Item ID: ${itemId} successfully deleted!`);
                 const list = items.filter(item => item.id !== itemId);

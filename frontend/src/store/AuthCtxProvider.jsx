@@ -33,7 +33,7 @@ export default function AuthCtxProvider({children}) {
     const [authState, setAuthState] = useState({
         token: tokenData?.token || '',
         email: tokenData?.email || '',
-        userId: tokenData?.sub || '',
+        userId: tokenData?.userId || '',
     });
 
     function login(email, token) {
@@ -42,7 +42,7 @@ export default function AuthCtxProvider({children}) {
         setAuthState({
             token: token,
             email: email,
-            userId: tokenData.sub
+            userId: tokenData.userId
         });
 
         localStorage.setItem('token', token)

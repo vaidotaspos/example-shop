@@ -40,6 +40,40 @@ module.exports = {
 
         res.json(itemsArr[0]);
     },
+    update: async (req, res, next) => {
+        const {itemId} = req.params;
+
+        const {title, cat_id, description, price, img_url, rating, stock} = req.body;
+
+        const sql = 'UPDATE `items` ' +
+            'SET `title` = ?, `cat_id` = ?, `description` = ?, `price` = ?, `img_url` = ?, `rating` = ?, `stock` = ? ' +
+            'WHERE `id` = ?';
+
+        const [responseObject, error] = await makeSqlQuery(sql, [
+            title,
+            cat_id,
+            description,
+            price,
+            img_url,
+            rating,
+            stock,
+            itemId
+        ]);
+
+        if (error) {
+            return next(error);
+        }
+
+        if (responseObject.affectedRows !== 1) {
+            return next(new APIError('Something wrong with item edit', 400))
+        }
+
+        res.status(200).json({
+            id: itemId,
+            message: `Item with id: ${itemId} updated successfully`
+        });
+
+    },
     create: async (req, res, next) => {
         const {title, description, price, rating, stock, cat_id, img_url} = req.body;
 

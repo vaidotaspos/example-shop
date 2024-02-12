@@ -12,6 +12,9 @@ itemsRouter.get('/items', itemsController.getAll);
 // GET all /api/items/1
 itemsRouter.get('/items/:itemId', itemsController.getSingle);
 
+// GET all /api/items/1
+itemsRouter.put('/items/:itemId', validateJWTToken, itemsController.update);
+
 // POST /api/items - create
 itemsRouter.post('/items', validateJWTToken, itemsController.create);
 

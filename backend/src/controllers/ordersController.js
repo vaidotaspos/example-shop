@@ -3,15 +3,25 @@ const {makeSqlQuery} = require('../helpers');
 
 module.exports = {
     create: async (req, res, next) => {
-        const {item_id, customer_id} = req.body;
+        const {item_id, customer_id, quantity} = req.body;
 
-        const sql = 'INSERT INTO `orders` (`item_id`, `customer_id`, `qty`, `total`) VALUES (?, ?, ?, ?)';
+        const itemSql = 'SELECT `price` FROM `items` WHERE `id` = ?';
+        const [itemResponseObject, sqlError] = await makeSqlQuery(itemSql, [item_id]);
+        if (itemResponseObject.length === 0) {
+            return next(new APIError('Item not found', 404));
+        }
+
+        const itemPrice = itemResponseObject[0].price;
+        const orderTotal = itemPrice * quantity;
+
+        const sql = 'INSERT INTO `orders` (`item_id`, `customer_id`, `qty`, `price`, `total`) VALUES (?, ?, ?, ?, ?)';
 
         const [responseObject, error] = await makeSqlQuery(sql, [
             item_id,
             customer_id,
-            1,
-            70
+            quantity,
+            itemPrice,
+            orderTotal
         ]);
 
         if (error) {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 13, 2024 at 09:07 AM
+-- Generation Time: Feb 13, 2024 at 09:24 AM
 -- Server version: 10.4.10-MariaDB
 -- PHP Version: 7.1.33
 
@@ -78,6 +78,7 @@ CREATE TABLE `orders` (
                           `item_id` int(10) UNSIGNED NOT NULL,
                           `customer_id` int(10) UNSIGNED NOT NULL,
                           `qty` int(10) UNSIGNED NOT NULL,
+                          `price` decimal(12,2) NOT NULL,
                           `total` decimal(12,2) NOT NULL,
                           `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

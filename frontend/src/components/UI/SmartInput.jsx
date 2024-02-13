@@ -26,7 +26,7 @@ function SmartInput({ id, formik, type = 'text', readOnly = false, placeholder =
             value={formik.values[id]}
             placeholder={placeholder}
             type={type}
-            className='w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 '
+            className='w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
             id={id}
           />
         )}

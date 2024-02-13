@@ -3,16 +3,20 @@ import {baseBeUrl} from "../../helper.js";
 import {useAuthContext} from "../../store/AuthCtxProvider.jsx";
 import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
+import {useState} from "react";
 
 export default function BuyItemButton({itemId, customerId}) {
     const navigate = useNavigate();
     const {token} = useAuthContext();
 
+    const [quantity, setQuantity] = useState(1);
+
     // get user from Context api
     const buyItem = async () => {
         sendAxiosData({
             item_id: itemId,
-            customer_id: customerId
+            customer_id: customerId,
+            quantity: parseInt(quantity)
         })
     };
 
@@ -32,11 +36,21 @@ export default function BuyItemButton({itemId, customerId}) {
 
     // get item id from route params
     return (
-        <button
-            onClick={buyItem}
-            className="mt-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-            Buy Item
-        </button>
+        <div className="">
+            <input
+                className='px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 mr-3'
+                type='number'
+                min='1'
+                max='99'
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+            />
+            <button
+                onClick={buyItem}
+                className="mt-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+                Buy Item
+            </button>
+        </div>
     );
 }

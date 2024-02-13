@@ -22,7 +22,14 @@ function makeJWTToken(data, expires = '1h') {
     return jwt.sign(data, jwtSecret, {expiresIn: expires});
 }
 
+function parseJWTToken(token) {
+    if (!jwtSecret) throw new Error('no secret provided');
+
+    return jwt.decode(token);
+}
+
 module.exports = {
     makeSqlQuery,
     makeJWTToken,
+    parseJWTToken,
 };

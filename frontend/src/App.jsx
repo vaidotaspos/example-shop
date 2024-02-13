@@ -12,6 +12,8 @@ import CategoryEditPage from "./pages/Category/CategoryEditPage.jsx";
 import ItemListPage from "./pages/Item/ItemListPage.jsx";
 import ItemCreatePage from "./pages/Item/ItemCreatePage.jsx";
 import ItemEditPage from "./pages/Item/ItemEditPage.jsx";
+import PrivateRoute from "./PrivateRoute/PrivateRoute.jsx";
+import OrderListPage from "./pages/Order/OrderListPage.jsx";
 
 export default function App() {
     return (
@@ -23,6 +25,12 @@ export default function App() {
                 <Route path='/shop' element={<ShopPage/>}/>
                 <Route path='/login' element={<LoginPage/>}/>
                 <Route path='/register' element={<RegisterPage/>}/>
+
+                <Route path='/orders' element={
+                    <PrivateRoute>
+                        <OrderListPage />
+                    </PrivateRoute>
+                } />
 
                 <Route path='/categories' element={
                     <AdminPrivateRoute>

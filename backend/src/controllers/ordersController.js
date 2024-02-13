@@ -1,5 +1,5 @@
 const APIError = require('../apiError/ApiError');
-const {makeSqlQuery} = require('../helpers');
+const {makeSqlQuery, parseJWTToken} = require('../helpers');
 
 module.exports = {
     create: async (req, res, next) => {
@@ -36,5 +36,28 @@ module.exports = {
             id: responseObject.insertId,
             message: `Order created successfully`,
         });
+    },
+    getAll: async (req, res, next) => {
+        const tokenData = parseJWTToken(req.header('Authorization'));
+
+        let sql = 'SELECT `orders`.`id`, `orders`.`total`, `orders`.`created_at`, CONCAT(`customers`.`firstname`, " ", `customers`.`lastname`) as `customer`  ' +
+            'FROM `orders` ' +
+            'JOIN `customers` ON `customers`.`id` = `orders`.`customer_id`';
+
+        let sqlArguments = [];
+        if (tokenData.scope && tokenData.scope !== 'admin') {
+            sql += ' WHERE `orders`.`customer_id` = ?';
+            sqlArguments = [
+                tokenData.userId
+            ]
+        }
+
+        const [responseObject, error] = await makeSqlQuery(sql, sqlArguments);
+
+        if (error) {
+            return next(error);
+        }
+
+        res.json(responseObject);
     }
 }

@@ -27,7 +27,7 @@ export default function BuyItemButton({itemId, customerId}) {
             })
             .then((response) => {
                 toast.success(response?.message || 'Order was created successfully!');
-                navigate('/', {replace: true})
+                navigate('/orders', {replace: true})
             })
             .catch((error) => {
                 toast.error(error.response.data.error);

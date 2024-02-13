@@ -1,10 +1,10 @@
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
-import SmartInput from '../components/UI/SmartInput';
+import SmartInput from '../../components/UI/SmartInput';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import {baseBeUrl} from '../helper';
-import {useAuthContext} from '../store/AuthCtxProvider';
+import {baseBeUrl} from '../../helper';
+import {useAuthContext} from '../../store/AuthCtxProvider';
 import {useNavigate} from 'react-router-dom';
 
 export default function LoginPage() {

@@ -1,7 +1,7 @@
-import useApiData from '../hooks/useApiData';
-import {useAuthContext} from '../store/AuthCtxProvider.jsx';
-import {baseBeUrl} from "../helper.js";
-import BuyItemButton from "../components/UI/BuyItemButton.jsx";
+import useApiData from '../../hooks/useApiData';
+import {useAuthContext} from '../../store/AuthCtxProvider.jsx';
+import {baseBeUrl} from "../../helper.js";
+import BuyItemButton from "../../components/UI/BuyItemButton.jsx";
 
 export default function ShopPage() {
     const [itemsArr, setItemsArr] = useApiData(`${baseBeUrl}items`);
@@ -20,12 +20,12 @@ export default function ShopPage() {
                 {itemsArr.map((item) => (
                     <div key={item.id}>
                         <img src={item.img_url} alt={item.title}/>
-                        <h2>title: {item.title}</h2>
-                        <p>description: {item.description}</p>
-                        <p>price: {item.price}</p>
-                        <p>rating: {item.rating}</p>
-                        <p>stock: {item.stock}</p>
-                        <p>cat_id: {item.cat_id}</p>
+                        <h2><span className='font-bold'>Pavadinimas:</span> {item.title}</h2>
+                        <p><span className='font-bold'>Aprašymas:</span> {item.description}</p>
+                        <p><span className='font-bold'>Kaina:</span> {item.price}</p>
+                        <p><span className='font-bold'>Įvertinimas:</span> {item.rating}</p>
+                        <p><span className='font-bold'>Likutis:</span> {item.stock}</p>
+                        <p><span className='font-bold'>Kategorija:</span> {item.category_name}</p>
                         {
                             isUserLoggedIn && (
                                 <BuyItemButton

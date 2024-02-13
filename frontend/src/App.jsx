@@ -1,7 +1,7 @@
 import {Route, Routes} from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ShopPage from './pages/ShopPage';
+import LoginPage from './pages/Auth/LoginPage';
+import RegisterPage from './pages/Auth/RegisterPage';
+import ShopPage from './pages/Shop/ShopPage';
 import HomePage from './pages/HomePage';
 import Header from './components/layuot/Header';
 import {Toaster} from 'react-hot-toast';
@@ -14,6 +14,7 @@ import ItemCreatePage from "./pages/Item/ItemCreatePage.jsx";
 import ItemEditPage from "./pages/Item/ItemEditPage.jsx";
 import PrivateRoute from "./PrivateRoute/PrivateRoute.jsx";
 import OrderListPage from "./pages/Order/OrderListPage.jsx";
+import OrderDetailPage from "./pages/Order/OrderDetailPage.jsx";
 
 export default function App() {
     return (
@@ -29,6 +30,12 @@ export default function App() {
                 <Route path='/orders' element={
                     <PrivateRoute>
                         <OrderListPage />
+                    </PrivateRoute>
+                } />
+
+                <Route path='/orders/:id' element={
+                    <PrivateRoute>
+                        <OrderDetailPage />
                     </PrivateRoute>
                 } />
 

@@ -1,8 +1,29 @@
 import useApiData from "../../hooks/useApiData.js";
 import {baseBeUrl, dateTimeOptions} from "../../helper.js";
+import {useAuthContext} from "../../store/AuthCtxProvider.jsx";
+import axios from "axios";
+import toast from "react-hot-toast";
+import {NavLink} from "react-router-dom";
 
 export default function OrderListPage() {
     const [orders, setOrders] = useApiData(`${baseBeUrl}orders`);
+
+    const {isUserAdmin, token} = useAuthContext();
+
+    function deleteOrder(orderId) {
+        axios
+            .delete(`${baseBeUrl}orders/${orderId}`, {
+                headers: {'Authorization': token}
+            })
+            .then((response) => {
+                toast.success(response?.message || `Order ID: ${orderId} successfully deleted!`);
+                const list = orders.filter(order => order.id !== orderId);
+                setOrders(list);
+            })
+            .catch((error) => {
+                toast.error(error.response.data.error)
+            })
+    }
 
     return (
         <div className="container mx-auto">
@@ -27,6 +48,21 @@ export default function OrderListPage() {
                                 <td className='border px-4 py-2'>{order.total}</td>
                                 <td className='border px-4 py-2'>{(new Date(order.created_at)).toLocaleString('lt-LT', dateTimeOptions)}</td>
                                 <td className='border px-4 py-2'>
+
+                                    <NavLink
+                                        to={`/orders/${order.id}`}
+                                        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+                                    >
+                                        Peržiūrėti
+                                    </NavLink>
+                                    {isUserAdmin && (
+                                        <button
+                                            className='bg-red-500 hover:bg-red-400 text-white font-bold ml-2 py-2 px-4 rounded'
+                                            onClick={() => deleteOrder(order.id)}
+                                        >
+                                            Ištrinti
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         )

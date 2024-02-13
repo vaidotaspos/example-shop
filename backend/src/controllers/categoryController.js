@@ -68,7 +68,7 @@ module.exports = {
 
         res.status(201).json({
             id: responseObject.insertId,
-            message: 'Category created successfully'
+            message: 'Category created successfully!'
         });
     },
     delete: async (req, res, next) => {

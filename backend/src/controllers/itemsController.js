@@ -101,7 +101,7 @@ module.exports = {
 
         res.status(201).json({
             id: resObj.insertId,
-            msg: 'success',
+            message: 'Item created successfully!',
         });
     },
     delete: async (req, res, next) => {
@@ -118,7 +118,7 @@ module.exports = {
         }
 
         res.status(200).json({
-            msg: 'success',
+            message: 'Item deleted successfully!',
         });
     },
 };

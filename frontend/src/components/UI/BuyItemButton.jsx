@@ -11,7 +11,6 @@ export default function BuyItemButton({itemId, customerId}) {
 
     const [quantity, setQuantity] = useState(1);
 
-    // get user from Context api
     const buyItem = async () => {
         sendAxiosData({
             item_id: itemId,
@@ -34,7 +33,6 @@ export default function BuyItemButton({itemId, customerId}) {
             });
     }
 
-    // get item id from route params
     return (
         <div className="">
             <input

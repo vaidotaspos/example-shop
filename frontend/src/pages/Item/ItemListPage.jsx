@@ -4,10 +4,12 @@ import {baseBeUrl} from "../../helper.js";
 import axios from "axios";
 import toast from "react-hot-toast";
 import {useAuthContext} from "../../store/AuthCtxProvider.jsx";
+import {useMemo, useState} from "react";
 
 export default function ItemListPage() {
     const [items, setItems] = useApiData(`${baseBeUrl}items`);
     const {token} = useAuthContext();
+    const [filterValue, setFilterValue] = useState('');
 
     function deleteItem(itemId) {
         axios
@@ -24,6 +26,15 @@ export default function ItemListPage() {
             })
     }
 
+    const filteredItems = useMemo(() => {
+        return items.filter(item => item.title.toLowerCase().includes(filterValue.toLowerCase())
+            || item.category_name.toLowerCase().includes(filterValue.toLowerCase()))
+    }, [items, filterValue]);
+
+    const handleFilterChange = event => {
+        setFilterValue(event.target.value)
+    }
+
     return (
         <div className='container mx-auto'>
             <div className='float-right'>
@@ -36,6 +47,15 @@ export default function ItemListPage() {
             </div>
 
             <h1 className='text-3xl text-center my-10'>Prekių sąrašas</h1>
+            <div className='mt-5'>
+                <input
+                    className='w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+                    type='text'
+                    value={filterValue}
+                    onChange={handleFilterChange}
+                    placeholder='Search Item'
+                />
+            </div>
             <div className='mt-5'>
                 <table className='min-w-full table-auto'>
                     <thead className='bg-gray-500 text-white'>
@@ -50,7 +70,7 @@ export default function ItemListPage() {
                     </tr>
                     </thead>
                     <tbody>
-                    {items.map((item) => (
+                    {filteredItems.map((item) => (
                             <tr key={item.id} className='bg-gray-100'>
                                 <td className='border px-4 py-2'>{item.id}</td>
                                 <td className='border px-4 py-2'>{item.title}</td>

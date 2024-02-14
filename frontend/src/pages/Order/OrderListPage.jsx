@@ -4,11 +4,13 @@ import {useAuthContext} from "../../store/AuthCtxProvider.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
 import {NavLink} from "react-router-dom";
+import {useMemo, useState} from "react";
 
 export default function OrderListPage() {
     const [orders, setOrders] = useApiData(`${baseBeUrl}orders`);
-
     const {isUserAdmin, token} = useAuthContext();
+    const [filterValue, setFilterValue] = useState('');
+
 
     function deleteOrder(orderId) {
         axios
@@ -25,9 +27,27 @@ export default function OrderListPage() {
             })
     }
 
+
+    const filteredOrders = useMemo(() => {
+        return orders.filter(order => order.customer.toLowerCase().includes(filterValue.toLowerCase()))
+    }, [orders, filterValue]);
+
+    const handleFilterChange = event => {
+        setFilterValue(event.target.value)
+    }
+
     return (
         <div className="container mx-auto">
             <h1 className='text-3xl text-center my-10'>Užsakymų sąrašas</h1>
+            <div className='mt-5'>
+                <input
+                    className='w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+                    type='text'
+                    value={filterValue}
+                    onChange={handleFilterChange}
+                    placeholder='Search Order'
+                />
+            </div>
             <div className='mt-5'>
                 <table className='min-w-full table-auto'>
                     <thead className='bg-gray-500 text-white'>
@@ -40,7 +60,7 @@ export default function OrderListPage() {
                     </tr>
                     </thead>
                     <tbody>
-                    {orders.map((order) => (
+                    {filteredOrders.map((order) => (
 
                             <tr key={order.id} className='bg-gray-100'>
                                 <td className='border px-4 py-2'>{order.id}</td>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 13, 2024 at 09:24 AM
+-- Generation Time: Feb 14, 2024 at 11:34 AM
 -- Server version: 10.4.10-MariaDB
 -- PHP Version: 7.1.33
 
@@ -29,8 +29,8 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `categories` (
-                              `id` int(10) UNSIGNED NOT NULL,
-                              `name` varchar(255) NOT NULL
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -40,13 +40,13 @@ CREATE TABLE `categories` (
 --
 
 CREATE TABLE `customers` (
-                             `id` int(10) UNSIGNED NOT NULL,
-                             `firstname` varchar(128) NOT NULL,
-                             `lastname` varchar(128) NOT NULL,
-                             `email` varchar(255) NOT NULL,
-                             `password` varchar(255) NOT NULL,
-                             `scope` enum('admin','customer') NOT NULL DEFAULT 'customer',
-                             `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(10) UNSIGNED NOT NULL,
+  `firstname` varchar(128) NOT NULL,
+  `lastname` varchar(128) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `scope` enum('admin','customer') NOT NULL DEFAULT 'customer',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -56,15 +56,28 @@ CREATE TABLE `customers` (
 --
 
 CREATE TABLE `items` (
-                         `id` int(10) UNSIGNED NOT NULL,
-                         `title` varchar(255) NOT NULL,
-                         `description` text NOT NULL,
-                         `price` decimal(12,2) NOT NULL,
-                         `rating` double(3,2) NOT NULL,
-                         `stock` int(10) NOT NULL,
-                         `cat_id` int(10) UNSIGNED NOT NULL,
-                         `img_url` varchar(255) NOT NULL,
-                         `isDeleted` tinyint(1) NOT NULL DEFAULT 0
+  `id` int(10) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `price` decimal(12,2) NOT NULL,
+  `rating` double(3,2) NOT NULL,
+  `stock` int(10) NOT NULL,
+  `cat_id` int(10) UNSIGNED NOT NULL,
+  `img_url` varchar(255) NOT NULL,
+  `isDeleted` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `item_ratings`
+--
+
+CREATE TABLE `item_ratings` (
+  `id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `rating` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -74,13 +87,13 @@ CREATE TABLE `items` (
 --
 
 CREATE TABLE `orders` (
-                          `id` int(10) UNSIGNED NOT NULL,
-                          `item_id` int(10) UNSIGNED NOT NULL,
-                          `customer_id` int(10) UNSIGNED NOT NULL,
-                          `qty` int(10) UNSIGNED NOT NULL,
-                          `price` decimal(12,2) NOT NULL,
-                          `total` decimal(12,2) NOT NULL,
-                          `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(10) UNSIGNED NOT NULL,
+  `item_id` int(10) UNSIGNED NOT NULL,
+  `customer_id` int(10) UNSIGNED NOT NULL,
+  `qty` int(10) UNSIGNED NOT NULL,
+  `price` decimal(12,2) NOT NULL,
+  `total` decimal(12,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -91,25 +104,31 @@ CREATE TABLE `orders` (
 -- Indexes for table `categories`
 --
 ALTER TABLE `categories`
-    ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `customers`
 --
 ALTER TABLE `customers`
-    ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `items`
 --
 ALTER TABLE `items`
-    ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `item_ratings`
+--
+ALTER TABLE `item_ratings`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `orders`
 --
 ALTER TABLE `orders`
-    ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -119,25 +138,31 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-    MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-    MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-    MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `item_ratings`
+--
+ALTER TABLE `item_ratings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-    MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

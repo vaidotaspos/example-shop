@@ -12,8 +12,11 @@ itemsRouter.get('/items', itemsController.getAll);
 // GET all /api/items/1
 itemsRouter.get('/items/:itemId', itemsController.getSingle);
 
-// GET all /api/items/1
+// PTU update /api/items/1
 itemsRouter.put('/items/:itemId', validateJWTToken, itemsController.update);
+
+// PUT /api/items/1/rating
+itemsRouter.put('/items/:itemId/rating', validateJWTToken, itemsController.updateRating);
 
 // POST /api/items - create
 itemsRouter.post('/items', validateJWTToken, itemsController.create);

@@ -3,10 +3,12 @@ const {makeSqlQuery} = require('../helpers');
 
 module.exports = {
     getAll: async (req, res, next) => {
-        const sql = 'SELECT `i`.*, `c`.name AS `category_name` ' +
+        const sql = 'SELECT `i`.*, `c`.name AS `category_name`, AVG(`ir`.`rating`) AS `average_rating`, COUNT(`ir`.`item_id`) as `rating_count` ' +
             'FROM `items` as `i` ' +
-            'LEFT JOIN `categories` AS c ON `i`.`cat_id`  = `c`.`id`' +
-            'WHERE `i`.`isDeleted` = 0';
+            'LEFT JOIN `categories` AS c ON `i`.`cat_id`  = `c`.`id` ' +
+            'LEFT JOIN `item_ratings` AS ir ON `ir`.`item_id`  = `i`.`id` ' +
+            'WHERE `i`.`isDeleted` = 0 ' +
+            'GROUP BY `i`.`id`';
 
         const [itemsArr, error] = await makeSqlQuery(sql);
 
@@ -39,6 +41,27 @@ module.exports = {
         // arba item
 
         res.json(itemsArr[0]);
+    },
+    updateRating: async (req, res, next) => {
+        const {itemId} = req.params;
+
+        const {rating} = req.body;
+
+        const sql = 'UPDATE `items` SET `rating` = ? WHERE `id` = ?';
+        const [responseObject, error] = await makeSqlQuery(sql, [rating, itemId]);
+
+        if (error) {
+            return next(error);
+        }
+
+        if (responseObject.affectedRows !== 1) {
+            return next(new APIError('Something wrong with item rating update', 400))
+        }
+
+        res.status(200).json({
+            id: itemId,
+            message: `Item with id: ${itemId} rating updated successfully`
+        });
     },
     update: async (req, res, next) => {
         const {itemId} = req.params;

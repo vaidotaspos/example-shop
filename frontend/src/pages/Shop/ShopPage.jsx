@@ -2,11 +2,44 @@ import useApiData from '../../hooks/useApiData';
 import {useAuthContext} from '../../store/AuthCtxProvider.jsx';
 import {baseBeUrl} from "../../helper.js";
 import BuyItemButton from "../../components/UI/BuyItemButton.jsx";
+import ProductStarRating from "../../components/UI/ProductStarRating.jsx";
+import axios from "axios";
+import toast from "react-hot-toast";
+import {useState, useEffect} from "react";
 
 export default function ShopPage() {
     const [itemsArr, setItemsArr] = useApiData(`${baseBeUrl}items`);
 
-    const {isUserLoggedIn, userId} = useAuthContext();
+    const [itemRatings, setItemRatings] = useState([]);
+
+    const {token, isUserLoggedIn, userId} = useAuthContext();
+
+
+    // useEffect(() => {
+    //     if (isUserLoggedIn) {
+    //         setItemRatings(useApiData(`${baseBeUrl}item-ratings/customer/${userId}`));
+    //     }
+    // }, [itemRatings]);
+
+    const handleRating = (id, rating) => {
+        axios
+            .post(`${baseBeUrl}item-ratings`,
+                {
+                    item_id: id,
+                    customer_id: userId,
+                    rating: rating
+                },
+                {
+                    headers: {'Authorization': token}
+                })
+            .then((response) => {
+                toast.success(response?.message || 'Item rating was successfully added!');
+                //setItemsArr(itemsArr.map(item => item.id === id ? {...item, rating} : item))
+            })
+            .catch((error) => {
+                toast.error(error.response.data.error);
+            });
+    };
 
     return (
         <div className='container bg-slate-300'>
@@ -23,15 +56,26 @@ export default function ShopPage() {
                         <h2><span className='font-bold'>Pavadinimas:</span> {item.title}</h2>
                         <p><span className='font-bold'>Aprašymas:</span> {item.description}</p>
                         <p><span className='font-bold'>Kaina:</span> {item.price}</p>
-                        <p><span className='font-bold'>Įvertinimas:</span> {item.rating}</p>
+                        <p><span className='font-bold'>Įvertinimas:</span> {Math.round(item.average_rating * 100) / 100} ({item.rating_count})</p>
+                        { isUserLoggedIn && (
+                            <div>
+                                <ProductStarRating
+                                    rating={item.user_rating}
+                                    onRating={(rating) => handleRating(item.id, rating)}
+                                />
+                            </div>
+                        )}
                         <p><span className='font-bold'>Likutis:</span> {item.stock}</p>
                         <p><span className='font-bold'>Kategorija:</span> {item.category_name}</p>
                         {
-                            isUserLoggedIn && (
+                            isUserLoggedIn && item.stock > 0 ? (
                                 <BuyItemButton
                                     itemId={item.id}
                                     customerId={userId}
+                                    itemStock={item.stock}
                                 />
+                            ) : (
+                                <p className='mt-4 text-center'><span className='font-bold'>OUT OF STOCK</span></p>
                             )
                         }
                     </div>

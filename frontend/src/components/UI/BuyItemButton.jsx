@@ -5,13 +5,20 @@ import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 
-export default function BuyItemButton({itemId, customerId}) {
+export default function BuyItemButton({itemId, customerId, itemStock}) {
     const navigate = useNavigate();
     const {token} = useAuthContext();
 
     const [quantity, setQuantity] = useState(1);
 
+    const [max, setMax] = useState(itemStock);
+
     const buyItem = async () => {
+        if (quantity > max) {
+            toast.error('Item stock is too low!');
+            return;
+        }
+
         sendAxiosData({
             item_id: itemId,
             customer_id: customerId,
@@ -39,7 +46,7 @@ export default function BuyItemButton({itemId, customerId}) {
                 className='px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 mr-3'
                 type='number'
                 min='1'
-                max='99'
+                max={max}
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
             />

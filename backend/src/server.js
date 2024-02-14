@@ -8,6 +8,7 @@ const { mainErrroHandler, validateJWTToken} = require('./middleware');
 const itemsRouter = require('./routes/itemRoutes');
 const categoriesRouter = require('./routes/categoryRoutes');
 const ordersRouter = require('./routes/ordersRoutes');
+const itemRatingRoutes = require('./routes/itemRatingRoutes');
 
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api', authRouter);
 app.use('/api', itemsRouter);
 app.use('/api', validateJWTToken, categoriesRouter);
 app.use('/api', validateJWTToken, ordersRouter);
+app.use('/api', validateJWTToken, itemRatingRoutes);
 
 // 404 not found page api
 app.use((req, res) => {

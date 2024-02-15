@@ -14,14 +14,11 @@ export default function ShopPage() {
 
     const {token, isUserLoggedIn, userId} = useAuthContext();
 
-
-    // useEffect(() => {
-    //     if (isUserLoggedIn) {
-    //         setItemRatings(useApiData(`${baseBeUrl}item-ratings/customer/${userId}`));
-    //     }
-    // }, [itemRatings]);
-
     const handleRating = (id, rating) => {
+        if (itemRatings.find((itemRating) => itemRating.item_id === id)) {
+            return;
+        }
+
         axios
             .post(`${baseBeUrl}item-ratings`,
                 {
@@ -34,12 +31,37 @@ export default function ShopPage() {
                 })
             .then((response) => {
                 toast.success(response?.message || 'Item rating was successfully added!');
-                //setItemsArr(itemsArr.map(item => item.id === id ? {...item, rating} : item))
+                setItemRatings([...itemRatings, {
+                    item_id: id,
+                    rating: rating
+                }])
+
             })
             .catch((error) => {
                 toast.error(error.response.data.error);
             });
     };
+
+    useEffect(() => {
+        if (isUserLoggedIn) {
+            const customerItemsRatings = async () => {
+                await axios
+                    .get(`${baseBeUrl}item-ratings/customer/${userId}`, {
+                        headers: {'Authorization': token}
+                    })
+                    .then((response) => {
+                        setItemRatings(response.data);
+                    })
+                    .catch((error) => {
+                        toast.error(error.response.data.error);
+                    });
+            }
+
+            customerItemsRatings();
+        }
+    }, []);
+
+
 
     return (
         <div className='container bg-slate-300'>
@@ -60,7 +82,7 @@ export default function ShopPage() {
                         { isUserLoggedIn && (
                             <div>
                                 <ProductStarRating
-                                    rating={item.user_rating}
+                                    rating={itemRatings.find((itemRating) => itemRating.item_id === item.id)?.rating}
                                     onRating={(rating) => handleRating(item.id, rating)}
                                 />
                             </div>
@@ -68,15 +90,13 @@ export default function ShopPage() {
                         <p><span className='font-bold'>Likutis:</span> {item.stock}</p>
                         <p><span className='font-bold'>Kategorija:</span> {item.category_name}</p>
                         {
-                            isUserLoggedIn && item.stock > 0 ? (
+                            isUserLoggedIn ? item.stock > 0 ?
                                 <BuyItemButton
                                     itemId={item.id}
                                     customerId={userId}
                                     itemStock={item.stock}
                                 />
-                            ) : (
-                                <p className='mt-4 text-center'><span className='font-bold'>OUT OF STOCK</span></p>
-                            )
+                             : <p className='mt-4 text-center'><span className='font-bold'>OUT OF STOCK</span></p> : ''
                         }
                     </div>
                 ))}

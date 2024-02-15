@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ProductStarRating({rating, onRating}) {
+export default function ProductStarRating({rating = 0, onRating}) {
 
     const stars = [];
 

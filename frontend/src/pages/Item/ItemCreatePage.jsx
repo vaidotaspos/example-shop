@@ -174,6 +174,7 @@ export default function ItemCreatePage() {
                                 type="file"
                                 onChange={handleFileChange}
                                 className='w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+                                accept="image/*"
                                 id="file"/>
                         </label>
                         {formik.touched['file'] && formik.errors['file'] && (

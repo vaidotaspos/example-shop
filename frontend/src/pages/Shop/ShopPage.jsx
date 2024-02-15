@@ -1,6 +1,6 @@
 import useApiData from '../../hooks/useApiData';
 import {useAuthContext} from '../../store/AuthCtxProvider.jsx';
-import {baseBeUrl} from "../../helper.js";
+import {baseBackendUrl, baseBeUrl} from "../../helper.js";
 import BuyItemButton from "../../components/UI/BuyItemButton.jsx";
 import ProductStarRating from "../../components/UI/ProductStarRating.jsx";
 import axios from "axios";
@@ -62,7 +62,6 @@ export default function ShopPage() {
     }, []);
 
 
-
     return (
         <div className='container bg-slate-300'>
             <h1 className='text-3xl '>ShopPage</h1>
@@ -74,12 +73,14 @@ export default function ShopPage() {
             <div className='grid grid-cols-3 gap-4 p-3'>
                 {itemsArr.map((item) => (
                     <div key={item.id}>
-                        <img src={'http://localhost:3000/' + item.img_url} alt={item.title}/>
+                        <img src={baseBackendUrl + item.img_url} alt={item.title}/>
                         <h2><span className='font-bold'>Pavadinimas:</span> {item.title}</h2>
                         <p><span className='font-bold'>Aprašymas:</span> {item.description}</p>
                         <p><span className='font-bold'>Kaina:</span> {item.price}</p>
-                        <p><span className='font-bold'>Įvertinimas:</span> {Math.round(item.average_rating * 100) / 100} ({item.rating_count})</p>
-                        { isUserLoggedIn && (
+                        <p><span
+                            className='font-bold'>Įvertinimas:</span> {Math.round(item.average_rating * 100) / 100} ({item.rating_count})
+                        </p>
+                        {isUserLoggedIn && (
                             <div>
                                 <ProductStarRating
                                     rating={itemRatings.find((itemRating) => itemRating.item_id === item.id)?.rating}
@@ -96,7 +97,8 @@ export default function ShopPage() {
                                     customerId={userId}
                                     itemStock={item.stock}
                                 />
-                             : <p className='mt-4 text-center'><span className='font-bold'>OUT OF STOCK</span></p> : ''
+                                :
+                                <p className='mt-4 text-center'><span className='font-bold'>OUT OF STOCK</span></p> : ''
                         }
                     </div>
                 ))}

@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import SmartInput from "../../components/UI/SmartInput.jsx";
 import {Link, useNavigate} from "react-router-dom";
 import Select from "react-select";
-import {baseBeUrl} from "../../helper.js";
+import {baseBackendUrl, baseBeUrl} from "../../helper.js";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -11,6 +11,8 @@ import {useAuthContext} from "../../store/AuthCtxProvider.jsx";
 
 export default function ItemCreatePage() {
     const [categoriesOptions, setCategoriesOptions] = useState([""]);
+    const [itemImagePreview, setItemImagePreview] = useState('');
+
     const {token} = useAuthContext()
 
     const navigate = useNavigate();
@@ -79,7 +81,22 @@ export default function ItemCreatePage() {
     // Custom handler for file input to set the file within Formik's state
     const handleFileChange = (event) => {
         const file = event.currentTarget.files[0];
-        formik.setFieldValue('file', file);
+        if (file) {
+            if (file) {
+                formik.setFieldValue('file', file);
+
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setItemImagePreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    };
+
+    const handleDeleteImage = () => {
+        formik.setFieldValue('file', '');
+        setItemImagePreview('');
     };
 
     return (
@@ -136,6 +153,20 @@ export default function ItemCreatePage() {
                         placeholder='Enter item rating'
                     />
                     <div className='mt-5'>
+                        {(formik.values['img_url'] || itemImagePreview) && (
+                            <div className="p-5 border mb-5">
+                                <p className="font-bold">Image Preview</p>
+                                <img src={formik.values['img_url'] ? baseBackendUrl + formik.values['img_url'] : itemImagePreview} alt="Profile Preview" style={{width: '200px'}}/>
+                                <button
+                                    type="button"
+                                    onClick={handleDeleteImage}
+                                    className="bg-red-500 hover:bg-red-400 text-white font-bold ml-2 py-2 px-4 rounded"
+                                >
+                                    Delete Image
+                                </button>
+                            </div>
+                        )}
+
                         <label htmlFor="file" className='w-full mt-5'>
                             <span className='block'>File upload</span>
                             <input

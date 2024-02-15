@@ -29,7 +29,6 @@ module.exports = {
 
         // graznam klaida
         if (error) {
-            console.log('getAll items error ===');
             return next(error);
         }
 
@@ -77,7 +76,7 @@ module.exports = {
             cat_id,
             description,
             price,
-            img_url,
+            req?.file?.path ? 'images/' + req.file.filename : img_url,
             rating,
             stock,
             itemId
@@ -107,7 +106,7 @@ module.exports = {
             rating ?? 0,
             stock,
             cat_id,
-            req?.file?.path || ''
+            req?.file?.path ? 'images/' + req.file.filename : ''
         ];
 
         const sql = `INSERT INTO items (title, description, price, rating, stock, cat_id, img_url)

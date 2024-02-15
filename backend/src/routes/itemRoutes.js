@@ -10,7 +10,7 @@ const multer = require('multer');
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/images/'); // Ensure this folder exists
+        cb(null, 'src/public/images/'); // Ensure this folder exists
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -29,7 +29,7 @@ itemsRouter.get('/items', itemsController.getAll);
 itemsRouter.get('/items/:itemId', itemsController.getSingle);
 
 // PTU update /api/items/1
-itemsRouter.put('/items/:itemId', validateJWTToken, itemsController.update);
+itemsRouter.put('/items/:itemId',  upload.single('file'), validateJWTToken, itemsController.update);
 
 // PUT /api/items/1/rating
 itemsRouter.put('/items/:itemId/rating', validateJWTToken, itemsController.updateRating);

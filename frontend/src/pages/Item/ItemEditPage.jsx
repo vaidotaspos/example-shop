@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import SmartInput from "../../components/UI/SmartInput.jsx";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import Select from "react-select";
-import {baseBeUrl} from "../../helper.js";
+import {baseBackendUrl, baseBeUrl} from "../../helper.js";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -14,8 +14,8 @@ export default function ItemCreatePage() {
     const {id} = useParams();
 
     const [item, setItem] = useApiData(`${baseBeUrl}items/${id}`);
-
     const [categoriesOptions, setCategoriesOptions] = useState([""]);
+    const [itemImagePreview, setItemImagePreview] = useState('');
 
     const {token} = useAuthContext()
 
@@ -63,6 +63,7 @@ export default function ItemCreatePage() {
             file: Yup.mixed().optional()
         }),
         onSubmit: (values) => {
+
             sendAxiosData(values);
         },
     });
@@ -70,7 +71,10 @@ export default function ItemCreatePage() {
     function sendAxiosData(data) {
         axios
             .put(`${baseBeUrl}items/${id}`, data, {
-                headers: {'Authorization': token}
+                headers: {
+                    'Authorization': token,
+                    'Content-Type': 'multipart/form-data',
+                }
             })
             .then((response) => {
                 toast.success(response?.message || 'Item has been successfully updated!');
@@ -81,9 +85,24 @@ export default function ItemCreatePage() {
             });
     }
 
-    const handleFileChange = (event) => {
+    const handleImageChange = (event) => {
         const file = event.currentTarget.files[0];
-        formik.setFieldValue('file', file);
+        if (file) {
+            formik.setFieldValue('file', file);
+            formik.setFieldValue('img_url', '');
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setItemImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleDeleteImage = () => {
+        setItemImagePreview('');
+        formik.setFieldValue('file', '');
+        formik.setFieldValue('img_url', '');
     };
 
     return (
@@ -147,12 +166,26 @@ export default function ItemCreatePage() {
                         type='hidden'
                     />
                     <div className='mt-5'>
+                        {(formik.values['img_url'] || itemImagePreview) && (
+                            <div className="p-5 border mb-5">
+                                <p className="font-bold">Image Preview</p>
+                                <img src={formik.values['img_url'] ? baseBackendUrl + formik.values['img_url'] : itemImagePreview} alt="Profile Preview" style={{width: '200px'}}/>
+                                <button
+                                    type="button"
+                                    onClick={handleDeleteImage}
+                                    className="bg-red-500 hover:bg-red-400 text-white font-bold ml-2 py-2 px-4 rounded"
+                                >
+                                    Delete Image
+                                </button>
+                            </div>
+                        )}
+
                         <label htmlFor="file" className='w-full mt-5'>
                             <span className='block'>File upload</span>
                             <input
                                 name="file"
                                 type="file"
-                                onChange={handleFileChange}
+                                onChange={handleImageChange}
                                 className='w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
                                 id="file"/>
                         </label>

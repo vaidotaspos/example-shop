@@ -49,7 +49,8 @@ export default function ItemCreatePage() {
             price: item.price || '',
             stock: item.stock || '',
             rating: item.rating || '',
-            img_url: item.img_url || ''
+            img_url: item.img_url || '',
+            file: ''
         },
         validationSchema: Yup.object({
             title: Yup.string().min(3).max(255).required(),
@@ -59,6 +60,7 @@ export default function ItemCreatePage() {
             stock: Yup.number().required(),
             rating: Yup.number().optional(),
             img_url: Yup.string().optional(),
+            file: Yup.mixed().optional()
         }),
         onSubmit: (values) => {
             sendAxiosData(values);
@@ -67,7 +69,7 @@ export default function ItemCreatePage() {
 
     function sendAxiosData(data) {
         axios
-            .put(`${baseBeUrl}items/${id}`, data,{
+            .put(`${baseBeUrl}items/${id}`, data, {
                 headers: {'Authorization': token}
             })
             .then((response) => {
@@ -78,6 +80,11 @@ export default function ItemCreatePage() {
                 toast.error(error.response.data.error);
             });
     }
+
+    const handleFileChange = (event) => {
+        const file = event.currentTarget.files[0];
+        formik.setFieldValue('file', file);
+    };
 
     return (
         <div className='container mx-auto'>
@@ -137,9 +144,22 @@ export default function ItemCreatePage() {
                     <SmartInput
                         id='img_url'
                         formik={formik}
-                        type='text'
-                        placeholder='Enter item stock'
+                        type='hidden'
                     />
+                    <div className='mt-5'>
+                        <label htmlFor="file" className='w-full mt-5'>
+                            <span className='block'>File upload</span>
+                            <input
+                                name="file"
+                                type="file"
+                                onChange={handleFileChange}
+                                className='w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+                                id="file"/>
+                        </label>
+                        {formik.touched['file'] && formik.errors['file'] && (
+                            <p className='text-red-500 '>{formik.errors['file']}</p>
+                        )}
+                    </div>
                 </div>
                 <div className='flex items-center justify-center mt-5'>
                     <button

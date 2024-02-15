@@ -42,7 +42,7 @@ export default function ItemCreatePage() {
             price: '',
             stock: '',
             rating: '',
-            img_url: ''
+            file: ''
         },
         validationSchema: Yup.object({
             title: Yup.string().min(3).max(255).required(),
@@ -51,7 +51,7 @@ export default function ItemCreatePage() {
             price: Yup.string().required(),
             stock: Yup.number().required(),
             rating: Yup.number().optional(),
-            img_url: Yup.string().optional(),
+            file: Yup.mixed().optional()
         }),
         onSubmit: (values) => {
             sendAxiosData(values);
@@ -59,8 +59,14 @@ export default function ItemCreatePage() {
     });
 
     function sendAxiosData(data) {
+        //console.log('DATA === ', data);
         axios
-            .post(`${baseBeUrl}items`, data)
+            .post(`${baseBeUrl}items`, data, {
+                headers: {
+                    'Authorization': token,
+                    'Content-Type': 'multipart/form-data',
+                }
+            })
             .then((response) => {
                 toast.success(response?.message || 'Item has been successfully created!');
                 navigate('/items', {replace: true});
@@ -69,6 +75,12 @@ export default function ItemCreatePage() {
                 toast.error(error.response.data.error);
             });
     }
+
+    // Custom handler for file input to set the file within Formik's state
+    const handleFileChange = (event) => {
+        const file = event.currentTarget.files[0];
+        formik.setFieldValue('file', file);
+    };
 
     return (
         <div className='container mx-auto'>
@@ -123,12 +135,21 @@ export default function ItemCreatePage() {
                         type='text'
                         placeholder='Enter item rating'
                     />
-                    <SmartInput
-                        id='img_url'
-                        formik={formik}
-                        type='text'
-                        placeholder='Enter item stock'
-                    />
+                    <div className='mt-5'>
+                        <label htmlFor="file" className='w-full mt-5'>
+                            <span className='block'>File upload</span>
+                            <input
+                                name="file"
+                                type="file"
+                                onChange={handleFileChange}
+                                className='w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+                                id="file"/>
+                        </label>
+                        {formik.touched['file'] && formik.errors['file'] && (
+                            <p className='text-red-500 '>{formik.errors['file']}</p>
+                        )}
+                    </div>
+
                 </div>
                 <div className='flex items-center justify-center mt-5'>
                     <button

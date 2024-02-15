@@ -74,7 +74,7 @@ export default function ShopPage() {
             <div className='grid grid-cols-3 gap-4 p-3'>
                 {itemsArr.map((item) => (
                     <div key={item.id}>
-                        <img src={item.img_url} alt={item.title}/>
+                        <img src={'http://localhost:3000/' + item.img_url} alt={item.title}/>
                         <h2><span className='font-bold'>Pavadinimas:</span> {item.title}</h2>
                         <p><span className='font-bold'>Aprašymas:</span> {item.description}</p>
                         <p><span className='font-bold'>Kaina:</span> {item.price}</p>

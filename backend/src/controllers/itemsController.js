@@ -98,7 +98,7 @@ module.exports = {
 
     },
     create: async (req, res, next) => {
-        const {title, description, price, rating, stock, cat_id, img_url} = req.body;
+        const {title, description, price, rating, stock, cat_id} = req.body;
 
         const argArr = [
             title,
@@ -107,8 +107,9 @@ module.exports = {
             rating ?? 0,
             stock,
             cat_id,
-            img_url ?? ''
+            req?.file?.path || ''
         ];
+
         const sql = `INSERT INTO items (title, description, price, rating, stock, cat_id, img_url)
                      VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
